@@ -8,6 +8,9 @@ if which yum
     :
 fi
 
+ln -s /boot/vmlinuz-$(uname -r) /boot/vmlinuz-ganeti
+ln -s /boot/initramfs-$(uname -r).img /boot/initrd-ganeti.img
+
 wget -O - http://http.debian.net/debian/pool/main/g/ganeti-instance-debootstrap/ganeti-instance-debootstrap_0.16.orig.tar.gz| tar zxfv -
 cd ganeti-instance-debootstrap-0.16/
 ./autogen.sh 

@@ -1,9 +1,9 @@
 #!/bin/bash -xe
 
 create_debian () {
-  gnt-instance console $NAME
-  gnt-instance remove -f $NAME
   gnt-instance add --no-name-check --no-ip-check -t plain -o debootstrap+default --disk 0:size=10G -n `hostname` -B minmem=1024,maxmem=2048 -H kvm:spice_bind=127.0.0.1 debian
+  gnt-instance console debian
+  gnt-instance remove -f debian
 }
 
 # raw image creation
@@ -44,6 +44,15 @@ create_from_qcow2 () {
   gnt-instance add --no-name-check --no-ip-check -t plain -o noop --disk 0:adopt=tmp -n $(hostname) -B minmem=1024,maxmem=2048 -H kvm:kernel_path=,initrd_path= $IMGNAME
 }
 
+create_cirros () {
+  IMG=cirros-0.3.5-x86_64-disk.img
+  NAME=cirros
+  if [[ ! -f $IMG ]] ; then wget https://download.cirros-cloud.net/0.3.5/${IMG} ; fi
+  create_from_qcow2 $IMG $NAME
+  gnt-instance console $NAME
+  gnt-instance remove -f $NAME
+}
+
 create_centos () {
   IMG=CentOS-7-x86_64-GenericCloud-1511.qcow2
   NAME=centos
@@ -61,6 +70,7 @@ create_rhel () {
   gnt-instance remove -f $NAME
 }
 
+create_cirros
 create_debian
 create_fedora
 create_centos
