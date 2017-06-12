@@ -19,10 +19,21 @@ wget -O - http://10.30.65.200/haskell-platform-7.10.3-unknown-posix-x86_64.tar.g
 ./install-haskell-platform.sh
 rm -f hp-usr-local.tar.gz  install-haskell-platform.sh
 cabal update
+
+CABAL_OPTIONS="--only-dependencies"
+CABAL_OPTIONS+=" --max-backjumps=-1"
+#CABAL_OPTIONS+="--force-reinstalls"
+#GANETTI_RELEASE=ganeti-2.15.2
+GANETTI_RELEASE=ganeti-2.16.0~rc1
+#GANETTI_RELEASE=ganeti-2.17.0~beta1
+GANETTI_MAJ_RELEASE=$(expr ${GANETTI_RELEASE} : '^ganeti-\([0-9]*\.[0-9]*\)')
+curl  http://downloads.ganeti.org/releases/${GANETTI_MAJ_RELEASE}/${GANETTI_RELEASE}.tar.gz | tar xzf - ; cd ${GANETTI_RELEASE}
+
+
 ## curl  http://downloads.ganeti.org/releases/2.17/ganeti-2.17.0~beta1.tar.gz | tar xzf - ; cd ganeti-2.17.0~beta1
 ## curl  http://downloads.ganeti.org/releases/2.15/ganeti-2.15.2.tar.gz | tar xzf - ; cd ganeti-2.15.2
 curl  http://downloads.ganeti.org/releases/2.16/ganeti-2.16.0~rc1.tar.gz | tar xzf - ; cd ganeti-2.16.0~rc1
-cabal install --only-dependencies cabal/ganeti.template.cabal --flags="confd mond metad"
+cabal install $CABAL_OPTIONS cabal/ganeti.template.cabal --flags="confd mond metad"
 # cabal install --force-reinstalls --only-dependencies cabal/ganeti.template.cabal --flags="confd mond metad"
 ./configure --exec-prefix=/usr --prefix=/usr --localstatedir=/var --sysconfdir=/etc --enable-symlinks
 make
